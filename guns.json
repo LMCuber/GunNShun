@@ -1,0 +1,157 @@
+{
+  "____________________ HANDGUNS ____________________": null,
+
+  "Colt M1911":
+  {
+    "mag": 8,
+    "ammo": 80,
+    "damage": 20,
+    "reload": [1.9, 2.65],
+    "firerate": ["semi", 800],
+    "mobility": 3,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "____________________ BOLT-ACTION RIFLES ____________________": null,
+
+  "Kar98K":
+  {
+    "mag": 5,
+    "ammo": 50,
+    "damage": 100,
+    "reload": [2.5, 2.5],
+    "firerate": ["bolt-action", 48],
+    "pierce": 0,
+    "mobility": 1,
+    "fov": 0
+  },
+
+  "____________________ SEMI-AUTOMATIC RIFLES ____________________": null,
+
+  "M1 Garand":
+  {
+    "mag": 8,
+    "ammo": 128,
+    "damage": 68,
+    "reload": [3.4, 1.6],
+    "firerate": ["semi", 444],
+    "mobility": 2,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "M1A1 Carbine":
+  {
+    "mag": 15,
+    "ammo": 120,
+    "damage": 68,
+    "reload": [2.9, 3.7],
+    "firerate": ["semi", 444],
+    "mobility": 2,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "PTRS-41":
+  {
+    "mag": 5,
+    "ammo": 60,
+    "damage": 1000,
+    "reload": [4, 5.3],
+    "firerate": ["semi", 75],
+    "mobility": 1,
+    "fov": 0,
+    "pierce": 1
+  },
+
+  "____________________ SMALL MACHINE GUNS ____________________": null,
+
+  "BAR":
+  {
+    "mag": 20,
+    "ammo": 140,
+    "damage": 100,
+    "reload": [2.75, 3.25],
+    "firerate": ["auto", 375],
+    "mobility": 1,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "MP40":
+  {
+    "mag": 32,
+    "ammo": 192,
+    "damage": 100,
+    "reload": [2.3, 2.9],
+    "firerate": ["auto", 535],
+    "mobility": 3,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "Thompson":
+  {
+    "mag": 32,
+    "ammo": 192,
+    "damage": 100,
+    "reload": [2.1, 2.45],
+    "firerate": ["auto", 750],
+    "mobility": 3,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "FG42":
+  {
+    "mag": 32,
+    "ammo": 192,
+    "damage": 100,
+    "reload": [2.4, 3.5],
+    "firerate": ["auto", 937],
+    "mobility": 2,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "____________________ LIGHT MACHINE GUNS ____________________": null,
+
+  "Browning M1919":
+  {
+    "mag": 125,
+    "ammo": 500,
+    "damage": 130,
+    "reload": [7, 6],
+    "firerate": ["auto", 625],
+    "mobility": 1,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "MG42":
+  {
+    "mag": 125,
+    "ammo": 500,
+    "damage": 130,
+    "reload": [4.5, 4.5],
+    "firerate": ["auto", 937],
+    "mobility": 1,
+    "fov": 0,
+    "pierce": 0
+  },
+
+  "____________________ SHOTGUNS ____________________": null,
+
+  "M1897 Trench Gun":
+  {
+    "mag": 6,
+    "ammo": 60,
+    "damage": 160,
+    "reload": [0.6],
+    "firerate": ["pump-action", 750],
+    "mobility": 3,
+    "fov": 0,
+    "pierce": 1
+  }
+}

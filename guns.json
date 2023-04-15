@@ -141,17 +141,5 @@
     "pierce": 0
   },
 
-  "____________________ SHOTGUNS ____________________": null,
-
-  "M1897 Trench Gun":
-  {
-    "mag": 6,
-    "ammo": 60,
-    "damage": 160,
-    "reload": [0.6],
-    "firerate": ["pump-action", 750],
-    "mobility": 3,
-    "fov": 0,
-    "pierce": 1
-  }
+  "____________________ SHOTGUNS ____________________": null
 }

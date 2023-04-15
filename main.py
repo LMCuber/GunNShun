@@ -33,16 +33,16 @@ for i in range(WIDTH):
     tex = Texture.from_surface(ren, intro_img)
     intro_sprs.append(tex)
 intro_rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
-bullet_sound = pygame.mixer.Sound("assets/sounds/bullet.wav")
+bullet_sound = pygame.mixer.Sound(path("assets", "sounds", "bullet.wav"))
 bullet_sound.set_volume(0.3)
-death_sound = pygame.mixer.Sound("assets/sounds/death.wav")
-reload_sound = pygame.mixer.Sound("assets/sounds/reload.wav")
-reload_complete_sound = pygame.mixer.Sound("assets/sounds/reload_complete.wav")
-ray_gun_sound = pygame.mixer.Sound("assets/sounds/ray_gun.wav")
-spawn_sounds = [pygame.mixer.Sound(f"assets/sounds/spawn{n}.wav") for n in range(1, 2)]
-lava_sound = pygame.mixer.Sound(f"assets/sounds/lava.wav")
+death_sound = pygame.mixer.Sound(path("assets", "sounds", "death.wav"))
+reload_sound = pygame.mixer.Sound(path("assets", "sounds", "reload.wav"))
+reload_complete_sound = pygame.mixer.Sound(path("assets", "sounds", "reload_complete.wav"))
+ray_gun_sound = pygame.mixer.Sound(path("assets", "sounds", "ray_gun.wav"))
+spawn_sounds = [pygame.mixer.Sound(path("assets", "sounds", f"spawn{n}.wav")) for n in range(1, 2)]
+lava_sound = pygame.mixer.Sound(path("assets", "sounds", "lava.wav"))
 lava_sound.set_volume(0.5)
-new_gun_sound = pygame.mixer.Sound(f"assets/sounds/new_gun.wav")
+new_gun_sound = pygame.mixer.Sound(path("assets", "sounds", "new_gun.wav"))
 for spawn_sound in spawn_sounds:
     spawn_sound.set_volume(0.2)
 palette = [
@@ -56,7 +56,7 @@ with open("guns.json") as f:
     gun_data = json.load(f)
     gun_names = list(x for x in gun_data.keys() if x[0] != "_")
     gun_categories = ("Pierce", "Mobility", "Firerate", "Reload", "Damage", "Ammo", "Mag")
-    gun_maxes = {"Pierce": 1, "Mobility": 3, "Firerate": 937, "Reload": 0.6, "Damage": 1000, "Ammo": 500, "Mag": 125}
+    gun_maxes = {"Pierce": 1, "Mobility": 3, "Firerate": 937, "Reload": 1.9, "Damage": 1000, "Ammo": 500, "Mag": 125}
 
 def load_asset(*path):
     surf = pygame.image.load(os.path.join(*path))
@@ -96,7 +96,7 @@ class Scrollable:
 
 class Tile(Scrollable):
     size = 30
-    images = {name: Texture.from_surface(ren, pygame.transform.scale_by(palettize(pygame.image.load(path("assets/tiles", f"{name}.png"))), 3)) for name in ("stone",)}
+    images = {name: Texture.from_surface(ren, pygame.transform.scale_by(palettize(pygame.image.load(path("assets", "tiles", f"{name}.png"))), 3)) for name in ("stone",)}
     def __init__(self, row, col, id_):
         self.row, self.col, self.id = row, col, id_
         self.x, self.y = self.row * Tile.size, self.col * Tile.size
@@ -172,11 +172,15 @@ class Player(Scrollable):
             self.img.color = (255, 255, 255)
         for enemy in all_enemies:
             if self.rect.colliderect(enemy.rect):
-                self.hp -= 1
+                self.hp -= 0.1
                 self.img.color = (255, 0, 0)
                 break
         else:
             self.img.color = (255, 255, 255)
+
+        # death
+        if self.hp <= 0:
+            death_sound.play()
 
         # final
         self.rect.topleft = (int(self.x), int(self.y))
@@ -262,7 +266,7 @@ class Gun(Scrollable):
         self.dynamize()
         self.draw()
         if self.reloading:
-            write("[RELOADING]", player.scroll_rect.centerx, player.scroll_rect.centery + 45, "black", "center")
+            write("[RELOADING]", player.scroll_rect.centerx, player.scroll_rect.centery - 105, "black", "center")
             if time.perf_counter() - self.last_reload >= gun_data[self.name]["reload"][int(self.ammo == 0)]:
                 self.mag = gun_data[self.name]["mag"]
                 self.ammo -= gun_data[self.name]["mag"]
@@ -494,8 +498,9 @@ async def main():
         ren.fill_rect((0, 0, WIDTH, HEIGHT))
         for tile in all_tiles:
             tile.update()
-        player.update(dt)
-        gun.update()
+        if player.hp > 0:
+            player.update(dt)
+            gun.update()
         for bullet in all_bullets:
             bullet.update(dt)
         for enemy in all_enemies:
@@ -507,11 +512,14 @@ async def main():
         ren.draw_color = (30, 30, 30, 120)
         ren.fill_rect((WIDTH / 2 - w / 2, 0, w, h))
         write(int(clock.get_fps()), 10, 10, "white")
-        write(f"{gun.mag} | {gun.ammo}", player.scroll_rect.centerx, player.scroll_rect.top - 45, "black" if gun.mag > 0 else "red", "center")
-        write(f"HP: {int(player.hp)} | Points: {player.points}", WIDTH / 2, 8, "white", "midtop")
-
-        if player.points >= 0:
-            write("Space + 1000 points = random weapon | I = Gun info", WIDTH / 2, 35, "white", "midtop", mini_font)
+        if player.hp > 0:
+            write(f"HP: {int(player.hp)} | Points: {player.points}", WIDTH / 2, 8, "white", "midtop")
+            write(f"{gun.mag} | {gun.ammo}", player.scroll_rect.centerx, player.scroll_rect.top - 45, "black" if gun.mag > 0 else "red", "center")
+            if player.points >= 0:
+                write("Space + 1000 points = random weapon | I = Gun info", WIDTH / 2, 35, "white", "midtop", mini_font)
+        else:
+            all_enemies.clear()
+            write(f"Survived {game_round - 1} round{'s' if game_round - 1 > 1 else ''}", WIDTH / 2, HEIGHT / 2, "red", "center", giga_font)
 
         if not round_active:
             round_started = time.perf_counter()
@@ -540,6 +548,8 @@ async def main():
         if gun_info:
             write(gun.name, WIDTH - 250, HEIGHT - 15 - 8 * 20, "black", "bottomleft", font)
             for y, cat in enumerate(gun_categories):
+                if cat == "Reload":
+                    continue
                 write(cat, WIDTH - 250, HEIGHT - 15 - y * 20, "black", "bottomleft", mini_font)
                 try:
                     ratio = gun_data[gun.name][cat.lower()] / gun_maxes[cat]
@@ -554,8 +564,8 @@ async def main():
                 ren.draw_color = (0, 0, 0, 0)
                 ren.draw_rect(rect)
 
-        if time.perf_counter() - round_started >= 5:
-            if time.perf_counter() - last_lava >= 3:
+        if time.perf_counter() - round_started >= 15:
+            if time.perf_counter() - last_lava >= 7:
                 random.choice(all_tiles).set_lava()
                 last_lava = time.perf_counter()
                 lava_sound.play()

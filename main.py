@@ -134,7 +134,7 @@ class Player(Scrollable):
     def key_input(self, dt):
         keys = pygame.key.get_pressed()
         mod = pygame.key.get_mods()
-        v = 0.5 * dt * gun_data[gun.name]["mobility"]
+        v = 1.5 + 0.5 * dt * gun_data[gun.name]["mobility"]
         moved = False
         if keys[pygame.K_a]:
             self.x -= v
@@ -157,14 +157,14 @@ class Player(Scrollable):
         # lava
         for tile in all_tiles:
             if tile.lava and self.rect.colliderect(tile.rect):
-                self.hp -= 0.1
+                self.hp -= 0.05
                 self.img.color = (255, 0, 0)
                 break
         else:
             self.img.color = (255, 255, 255)
         for bullet in all_bullets:
             if bullet.enemy and self.rect.colliderect(bullet.rect):
-                self.hp -= 5
+                self.hp -= 2.5
                 self.img.color = (255, 0, 0)
                 all_bullets.remove(bullet)
                 break
@@ -172,7 +172,7 @@ class Player(Scrollable):
             self.img.color = (255, 255, 255)
         for enemy in all_enemies:
             if self.rect.colliderect(enemy.rect):
-                self.hp -= 0.1
+                self.hp -= 0.05
                 self.img.color = (255, 0, 0)
                 break
         else:
@@ -257,10 +257,11 @@ class Gun(Scrollable):
             self.reload()
 
     def reload(self):
-        if not self.reloading:
-            self.reloading = True
-            self.last_reload = time.perf_counter()
-            reload_sound.play()
+        if self.ammo > 0:
+            if not self.reloading:
+                self.reloading = True
+                self.last_reload = time.perf_counter()
+                reload_sound.play()
 
     def update(self):
         self.dynamize()
@@ -360,8 +361,8 @@ class Enemy(Scrollable):
                     all_enemies.remove(self)
                     if enemies_spawned == max_enemies and len(all_enemies) == 0:
                         round_active = False
-                    return
                     player.points += 100
+                    return
                 else:
                     player.points += 20
                 if not gun_data[gun.name]["pierce"]:
@@ -485,7 +486,7 @@ async def main():
                     gun_info = not gun_info
 
         if round_active:
-            if time.perf_counter() - last_enemy >= 0.3 and enemies_spawned < max_enemies:
+            if time.perf_counter() - last_enemy >= 0.6 and enemies_spawned < max_enemies:
                 x, y = random.randint(0, map_width), random.randint(0, map_height)
                 enemy = Enemy(x, y, 0.5)
                 all_enemies.append(enemy)
@@ -564,8 +565,8 @@ async def main():
                 ren.draw_color = (0, 0, 0, 0)
                 ren.draw_rect(rect)
 
-        if time.perf_counter() - round_started >= 15:
-            if time.perf_counter() - last_lava >= 7:
+        if time.perf_counter() - round_started >= 20:
+            if time.perf_counter() - last_lava >= 10:
                 random.choice(all_tiles).set_lava()
                 last_lava = time.perf_counter()
                 lava_sound.play()

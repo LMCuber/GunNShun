@@ -93,8 +93,8 @@
 
   "Thompson":
   {
-    "mag": 32,
-    "ammo": 192,
+    "mag": 20,
+    "ammo": 200,
     "damage": 100,
     "reload": [2.1, 2.45],
     "firerate": ["auto", 750],
